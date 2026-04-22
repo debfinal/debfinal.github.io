@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Debasis Roy — AI Analytics Engineer</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;600;700&family=DM+Mono:wght@300;400;500&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c10;
+    --bg2: #0f1117;
+    --bg3: #13161e;
+    --card: #141720;
+    --border: rgba(255,255,255,0.07);
+    --gold: #c9a84c;
+    --gold2: #e8c96d;
+    --goldglow: rgba(201,168,76,0.15);
+    --text: #e8e6e0;
+    --muted: #7a7d87;
+    --accent: #4a9eff;
+    --green: #3ddc84;
+    --red: #ff6b6b;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Outfit', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+  }
+
+  /* ─── NOISE TEXTURE OVERLAY ─── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.4;
+  }
+
+  /* ─── SCROLLBAR ─── */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 2px; }
+
+  /* ─── NAV ─── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.2rem 4rem;
+    background: rgba(10,12,16,0.85);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .nav-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--gold);
+    letter-spacing: 0.05em;
+    text-decoration: none;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2.5rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 400;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--gold); }
+
+  /* ─── HERO ─── */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    padding: 8rem 4rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-grid-bg {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(201,168,76,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(201,168,76,0.04) 1px, transparent 1px);
+    background-size: 60px 60px;
+    mask-image: radial-gradient(ellipse at 60% 50%, black 30%, transparent 80%);
+  }
+
+  .hero-glow {
+    position: absolute;
+    right: -10%;
+    top: 20%;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(74,158,255,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-glow2 {
+    position: absolute;
+    left: 20%;
+    bottom: 10%;
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(201,168,76,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 1;
+    max-width: 1200px;
+    width: 100%;
+  }
+
+  .hero-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.2s;
+  }
+
+  .hero-eyebrow::before {
+    content: '';
+    display: block;
+    width: 40px;
+    height: 1px;
+    background: var(--gold);
+  }
+
+  .hero-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(4rem, 9vw, 8rem);
+    font-weight: 300;
+    line-height: 0.95;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    margin-bottom: 1rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.4s;
+  }
+
+  .hero-name span {
+    color: var(--gold);
+    font-style: italic;
+  }
+
+  .hero-title {
+    font-family: 'Outfit', sans-serif;
+    font-size: clamp(1rem, 2vw, 1.3rem);
+    font-weight: 300;
+    color: var(--muted);
+    margin-bottom: 2rem;
+    max-width: 620px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.6s;
+  }
+
+  .hero-title strong {
+    color: var(--text);
+    font-weight: 500;
+  }
+
+  .hero-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.6rem;
+    margin-bottom: 3rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 0.8s;
+  }
+
+  .tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    padding: 0.3rem 0.8rem;
+    border: 1px solid var(--border);
+    border-radius: 2px;
+    color: var(--muted);
+    background: var(--card);
+    text-transform: uppercase;
+  }
+
+  .tag.gold { border-color: rgba(201,168,76,0.4); color: var(--gold); background: var(--goldglow); }
+
+  .hero-ctas {
+    display: flex;
+    gap: 1rem;
+    opacity: 0;
+    animation: fadeUp 0.8s ease forwards 1s;
+  }
+
+  .btn-primary {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.85rem 2rem;
+    background: var(--gold);
+    color: #0a0c10;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: 500;
+    transition: background 0.2s, transform 0.15s;
+    display: inline-block;
+  }
+
+  .btn-primary:hover { background: var(--gold2); transform: translateY(-1px); }
+
+  .btn-secondary {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.85rem 2rem;
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: 400;
+    transition: color 0.2s, border-color 0.2s, transform 0.15s;
+    display: inline-block;
+  }
+
+  .btn-secondary:hover { color: var(--text); border-color: rgba(255,255,255,0.3); transform: translateY(-1px); }
+
+  .hero-stats {
+    position: absolute;
+    right: 4rem;
+    top: 50%;
+    transform: translateY(-50%);
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    opacity: 0;
+    animation: fadeIn 1s ease forwards 1.2s;
+  }
+
+  .stat-item {
+    text-align: right;
+    border-right: 2px solid var(--gold);
+    padding-right: 1.2rem;
+  }
+
+  .stat-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--gold);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 0.2rem;
+  }
+
+  /* ─── SECTIONS ─── */
+  section { padding: 6rem 4rem; }
+
+  .section-header {
+    display: flex;
+    align-items: baseline;
+    gap: 1.5rem;
+    margin-bottom: 3.5rem;
+  }
+
+  .section-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--gold);
+    letter-spacing: 0.15em;
+  }
+
+  .section-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 400;
+    color: var(--text);
+    letter-spacing: -0.01em;
+  }
+
+  .section-line {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+    margin-left: 1rem;
+  }
+
+  /* ─── ANALYTIQ FEATURE ─── */
+  #analytiq {
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .analytiq-wrapper {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5rem;
+    align-items: center;
+  }
+
+  .analytiq-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    background: var(--goldglow);
+    border: 1px solid rgba(201,168,76,0.3);
+    padding: 0.3rem 0.8rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .analytiq-badge::before {
+    content: '◆';
+    font-size: 0.5rem;
+  }
+
+  .analytiq-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: var(--text);
+    line-height: 1;
+    margin-bottom: 1rem;
+  }
+
+  .analytiq-name span { color: var(--gold); }
+
+  .analytiq-desc {
+    color: var(--muted);
+    font-size: 1rem;
+    line-height: 1.7;
+    margin-bottom: 2rem;
+    font-weight: 300;
+  }
+
+  .analytiq-flow {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .flow-step {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 1rem 1.2rem;
+    border: 1px solid var(--border);
+    background: var(--card);
+    position: relative;
+  }
+
+  .flow-step + .flow-step {
+    border-top: none;
+  }
+
+  .flow-step::after {
+    content: '↓';
+    position: absolute;
+    bottom: -14px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 0.7rem;
+    color: var(--gold);
+    z-index: 1;
+    background: var(--bg2);
+    padding: 0 4px;
+  }
+
+  .flow-step:last-child::after { display: none; }
+
+  .flow-icon {
+    width: 36px;
+    height: 36px;
+    background: var(--goldglow);
+    border: 1px solid rgba(201,168,76,0.3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
+    flex-shrink: 0;
+  }
+
+  .flow-text {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--text);
+  }
+
+  .flow-sub {
+    font-size: 0.65rem;
+    color: var(--muted);
+    margin-top: 0.15rem;
+  }
+
+  /* ─── PROJECTS ─── */
+  #projects { max-width: 1200px; margin: 0 auto; }
+
+  .projects-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5px;
+    background: var(--border);
+  }
+
+  .project-card {
+    background: var(--card);
+    padding: 2rem;
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s;
+    cursor: default;
+  }
+
+  .project-card:hover { background: #181c26; }
+
+  .project-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 3px;
+    height: 0;
+    background: var(--gold);
+    transition: height 0.3s ease;
+  }
+
+  .project-card:hover::before { height: 100%; }
+
+  .project-num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--gold);
+    letter-spacing: 0.2em;
+    margin-bottom: 1.2rem;
+    opacity: 0.7;
+  }
+
+  .project-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.8rem;
+    line-height: 1.2;
+  }
+
+  .project-desc {
+    font-size: 0.875rem;
+    color: var(--muted);
+    line-height: 1.65;
+    font-weight: 300;
+    margin-bottom: 1.5rem;
+  }
+
+  .project-techs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4rem;
+  }
+
+  .tech-pill {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.08em;
+    padding: 0.2rem 0.6rem;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  /* ─── SKILLS ─── */
+  #skills {
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .skills-wrapper { max-width: 1200px; margin: 0 auto; }
+
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--border);
+  }
+
+  .skill-group {
+    background: var(--card);
+    padding: 2rem 1.8rem;
+  }
+
+  .skill-group-icon {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .skill-group-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--gold);
+    margin-bottom: 1.2rem;
+    padding-bottom: 0.8rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .skill-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .skill-list li {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--muted);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .skill-list li::before {
+    content: '—';
+    color: var(--gold);
+    font-size: 0.6rem;
+    opacity: 0.6;
+  }
+
+  /* ─── EXPERIENCE ─── */
+  #experience { max-width: 1200px; margin: 0 auto; }
+
+  .timeline {
+    position: relative;
+    padding-left: 2rem;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.5rem;
+    bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, var(--gold), transparent);
+  }
+
+  .timeline-item {
+    position: relative;
+    padding-bottom: 3.5rem;
+    padding-left: 2rem;
+  }
+
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -2.3rem;
+    top: 0.45rem;
+    width: 7px;
+    height: 7px;
+    border: 1px solid var(--gold);
+    background: var(--bg);
+    transform: rotate(45deg);
+  }
+
+  .exp-period {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.12em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 0.4rem;
+  }
+
+  .exp-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.2;
+  }
+
+  .exp-company {
+    font-size: 0.9rem;
+    color: var(--muted);
+    margin-bottom: 1.2rem;
+    font-weight: 300;
+  }
+
+  .exp-bullets {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .exp-bullets li {
+    font-size: 0.875rem;
+    color: var(--muted);
+    font-weight: 300;
+    line-height: 1.6;
+    padding-left: 1.2rem;
+    position: relative;
+  }
+
+  .exp-bullets li::before {
+    content: '›';
+    position: absolute;
+    left: 0;
+    color: var(--gold);
+  }
+
+  /* ─── PUBLICATIONS ─── */
+  #publications {
+    background: var(--bg2);
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .pub-wrapper { max-width: 1200px; margin: 0 auto; }
+
+  .pub-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5px;
+    background: var(--border);
+  }
+
+  .pub-card {
+    background: var(--card);
+    padding: 2rem;
+    position: relative;
+  }
+
+  .pub-venue {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.8rem;
+  }
+
+  .pub-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--text);
+    line-height: 1.3;
+    margin-bottom: 0.5rem;
+  }
+
+  .pub-meta {
+    font-size: 0.8rem;
+    color: var(--muted);
+    font-weight: 300;
+  }
+
+  /* ─── EDUCATION & CERTS ─── */
+  #education { max-width: 1200px; margin: 0 auto; }
+
+  .edu-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+  }
+
+  .edu-item {
+    border-left: 2px solid var(--gold);
+    padding-left: 1.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .edu-degree {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: var(--text);
+    margin-bottom: 0.3rem;
+  }
+
+  .edu-school {
+    font-size: 0.875rem;
+    color: var(--muted);
+    font-weight: 300;
+    margin-bottom: 0.2rem;
+  }
+
+  .edu-year {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--gold);
+    letter-spacing: 0.1em;
+  }
+
+  .certs-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+  }
+
+  .cert-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.8rem;
+    font-size: 0.85rem;
+    color: var(--muted);
+    font-weight: 300;
+  }
+
+  .cert-item::before {
+    content: '◇';
+    color: var(--gold);
+    font-size: 0.6rem;
+    margin-top: 0.3rem;
+    flex-shrink: 0;
+  }
+
+  /* ─── CONTACT ─── */
+  #contact {
+    text-align: center;
+    padding: 8rem 4rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .contact-glow {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 600px;
+    height: 400px;
+    background: radial-gradient(ellipse, rgba(201,168,76,0.06) 0%, transparent 70%);
+    pointer-events: none;
+  }
+
+  .contact-inner { position: relative; z-index: 1; }
+
+  .contact-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.5rem;
+  }
+
+  .contact-heading {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    font-weight: 300;
+    color: var(--text);
+    line-height: 1.1;
+    margin-bottom: 2rem;
+    letter-spacing: -0.02em;
+  }
+
+  .contact-links {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    flex-wrap: wrap;
+    margin-top: 2.5rem;
+  }
+
+  .contact-link {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    transition: color 0.2s;
+    padding: 0.5rem 1rem;
+    border: 1px solid var(--border);
+  }
+
+  .contact-link:hover { color: var(--gold); border-color: rgba(201,168,76,0.4); }
+
+  /* ─── FOOTER ─── */
+  footer {
+    padding: 2rem 4rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .footer-text {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    text-transform: uppercase;
+  }
+
+  .footer-logo {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    color: var(--gold);
+    font-weight: 600;
+  }
+
+  /* ─── ANIMATIONS ─── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 1024px) {
+    nav { padding: 1.2rem 2rem; }
+    section { padding: 5rem 2rem; }
+    #hero { padding: 8rem 2rem 4rem; }
+    .hero-stats { display: none; }
+    .analytiq-wrapper { grid-template-columns: 1fr; gap: 3rem; }
+    .projects-grid { grid-template-columns: 1fr 1fr; }
+    .skills-grid { grid-template-columns: 1fr 1fr; }
+    .edu-grid { grid-template-columns: 1fr; gap: 3rem; }
+    .pub-grid { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 640px) {
+    .nav-links { display: none; }
+    .projects-grid { grid-template-columns: 1fr; }
+    .skills-grid { grid-template-columns: 1fr; }
+    .hero-ctas { flex-direction: column; }
+    footer { flex-direction: column; gap: 1rem; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-logo" href="#hero">DR</a>
+  <ul class="nav-links">
+    <li><a href="#analytiq">AnalytIQ</a></li>
+    <li><a href="#projects">Projects</a></li>
+    <li><a href="#skills">Skills</a></li>
+    <li><a href="#experience">Experience</a></li>
+    <li><a href="#publications">Research</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-grid-bg"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-glow2"></div>
+  <div class="hero-content">
+    <p class="hero-eyebrow">AI Analytics Engineer · Capital Markets</p>
+    <h1 class="hero-name">Debasis<br><span>Roy</span></h1>
+    <p class="hero-title">
+      Building <strong>AI-powered analytics systems</strong> that turn business questions into production-grade insights — at the intersection of machine intelligence and capital markets.
+    </p>
+    <div class="hero-tags">
+      <span class="tag gold">Creator of AnalytIQ</span>
+      <span class="tag">MSR Valuation</span>
+      <span class="tag">LLM Agents</span>
+      <span class="tag">Python</span>
+      <span class="tag">SQL Server</span>
+      <span class="tag">Capital Markets</span>
+      <span class="tag">Streamlit</span>
+    </div>
+    <div class="hero-ctas">
+      <a href="#analytiq" class="btn-primary">See AnalytIQ →</a>
+      <a href="#contact" class="btn-secondary">Get in Touch</a>
+    </div>
+  </div>
+  <div class="hero-stats">
+    <div class="stat-item">
+      <div class="stat-num">4+</div>
+      <div class="stat-label">Years · Capital Markets</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">50%</div>
+      <div class="stat-label">Reporting Time Saved</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">14+</div>
+      <div class="stat-label">Years Experience</div>
+    </div>
+    <div class="stat-item">
+      <div class="stat-num">3</div>
+      <div class="stat-label">Publications</div>
+    </div>
+  </div>
+</section>
+
+<!-- ANALYTIQ -->
+<section id="analytiq">
+  <div class="analytiq-wrapper">
+    <div class="reveal">
+      <div class="analytiq-badge">Flagship Project</div>
+      <h2 class="analytiq-name">Analyt<span>IQ</span></h2>
+      <p class="analytiq-desc">
+        An internal AI analytics copilot built with Streamlit + Python + OpenAI. AnalytIQ enables non-technical business users to ask natural language questions and receive schema-aware SQL, automated visualizations, executive commentary, and email-ready reports — instantly.
+      </p>
+      <p class="analytiq-desc">
+        Combines LLM-based intent detection, business-rule enforcement, and data engineering best practices to ensure accuracy and trust in enterprise analytics. Connects directly to Tableau for dashboard recommendations.
+      </p>
+      <div class="hero-tags" style="margin-bottom:0;">
+        <span class="tag gold">Multi-Agent</span>
+        <span class="tag">OpenAI API</span>
+        <span class="tag">Streamlit</span>
+        <span class="tag">SQL Server</span>
+        <span class="tag">Plotly</span>
+        <span class="tag">Tableau</span>
+      </div>
+    </div>
+    <div class="analytiq-flow reveal">
+      <div class="flow-step">
+        <div class="flow-icon">💬</div>
+        <div>
+          <div class="flow-text">Natural Language Input</div>
+          <div class="flow-sub">User asks a business question in plain English</div>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-icon">🧠</div>
+        <div>
+          <div class="flow-text">LLM Intent Detection</div>
+          <div class="flow-sub">Schema-aware query understanding & business rule enforcement</div>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-icon">🗄️</div>
+        <div>
+          <div class="flow-text">Optimized SQL Generation</div>
+          <div class="flow-sub">Auto-generated, validated queries against SQL Server</div>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-icon">📊</div>
+        <div>
+          <div class="flow-text">Automated Visualizations</div>
+          <div class="flow-sub">Dynamic Plotly charts + Tableau dashboard suggestions</div>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-icon">📧</div>
+        <div>
+          <div class="flow-text">Executive Report & Email</div>
+          <div class="flow-sub">AI-written commentary, HTML report, stakeholder delivery</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROJECTS -->
+<section id="projects" style="padding-top:6rem; padding-bottom:6rem;">
+  <div style="max-width:1200px; margin:0 auto;">
+    <div class="section-header reveal">
+      <span class="section-num">02</span>
+      <h2 class="section-title">Key Projects</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="projects-grid reveal">
+
+      <div class="project-card">
+        <div class="project-num">01 · MSR Modeling</div>
+        <h3 class="project-title">Production MSR Valuation Engine</h3>
+        <p class="project-desc">Full loan-level cash flow model with multi-state delinquency transitions, endogenous CPR/SMM dynamics, servicing cost curves, foreclosure timelines, and DCF valuation. Numba-accelerated for large portfolio runs. Powers daily trading decisions at Veterans United.</p>
+        <div class="project-techs">
+          <span class="tech-pill">Python</span>
+          <span class="tech-pill">Numba</span>
+          <span class="tech-pill">NumPy</span>
+          <span class="tech-pill">SQL Server</span>
+          <span class="tech-pill">DCF</span>
+          <span class="tech-pill">CPR/SMM</span>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-num">02 · Automation</div>
+        <h3 class="project-title">Capital Markets Pipeline Automation</h3>
+        <p class="project-desc">End-to-end automated pipeline: SQL data pull → multi-model valuation → pricing metric computation → formatted Excel reports → stakeholder email delivery. Reduced manual reporting time by over 50%. Integrated with Windows Task Scheduler for overnight runs.</p>
+        <div class="project-techs">
+          <span class="tech-pill">Python</span>
+          <span class="tech-pill">Pandas</span>
+          <span class="tech-pill">OpenPyXL</span>
+          <span class="tech-pill">SMTP</span>
+          <span class="tech-pill">Task Scheduler</span>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-num">03 · Trading</div>
+        <h3 class="project-title">Best Execution (BestEx) Pricing</h3>
+        <p class="project-desc">Combines MSR valuations with bond pricing to determine optimal loan disposition. Integrates live swap curve data via Selenium web scraping. Supports bid tape analysis, margin optimization, and competitive pricing decisions for loan sales team.</p>
+        <div class="project-techs">
+          <span class="tech-pill">Python</span>
+          <span class="tech-pill">Selenium</span>
+          <span class="tech-pill">Pandas</span>
+          <span class="tech-pill">Excel</span>
+          <span class="tech-pill">Swap Curves</span>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-num">04 · GUI Tools</div>
+        <h3 class="project-title">Tkinter Analytics Workbench</h3>
+        <p class="project-desc">Suite of Python GUI applications enabling non-technical users to run complex MSR simulations, manage assumption workflows, generate bid tapes, and send formatted reports — without touching code. Built with Tkinter, pandas, and integrated SQL data access.</p>
+        <div class="project-techs">
+          <span class="tech-pill">Tkinter</span>
+          <span class="tech-pill">Python</span>
+          <span class="tech-pill">Pandas</span>
+          <span class="tech-pill">SQL</span>
+          <span class="tech-pill">SMTP</span>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-num">05 · Research</div>
+        <h3 class="project-title">Eye-Tracking Sleepiness Detection</h3>
+        <p class="project-desc">Published HCI research on identifying psychological indicators of sleepiness using eye-tracking metrics. Applied t-tests, hypothesis testing, and statistical analysis. Presented at AMCIS, HCII, ECIS, and PACIS — four international conferences in 2020.</p>
+        <div class="project-techs">
+          <span class="tech-pill">R</span>
+          <span class="tech-pill">Statistics</span>
+          <span class="tech-pill">HCI</span>
+          <span class="tech-pill">Eye-Tracking</span>
+          <span class="tech-pill">SPSS</span>
+        </div>
+      </div>
+
+      <div class="project-card">
+        <div class="project-num">06 · Data Science</div>
+        <h3 class="project-title">Statistical Modeling Portfolio</h3>
+        <p class="project-desc">Academic & personal projects: Road accident severity prediction (Python, Sklearn, confusion matrices), low infant birth weight logistic regression (R, GLM), US violent crime rate visualization (Ggplot), and front-end ant game (HTML/CSS/JS).</p>
+        <div class="project-techs">
+          <span class="tech-pill">Python</span>
+          <span class="tech-pill">R</span>
+          <span class="tech-pill">Sklearn</span>
+          <span class="tech-pill">Ggplot2</span>
+          <span class="tech-pill">GLM</span>
+          <span class="tech-pill">JavaScript</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="skills-wrapper">
+    <div class="section-header reveal">
+      <span class="section-num">03</span>
+      <h2 class="section-title">Technical Skills</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="skills-grid reveal">
+      <div class="skill-group">
+        <div class="skill-group-icon">🤖</div>
+        <div class="skill-group-name">AI & Automation</div>
+        <ul class="skill-list">
+          <li>LLM Agents & Orchestration</li>
+          <li>OpenAI API Integration</li>
+          <li>Prompt Engineering</li>
+          <li>Streamlit Applications</li>
+          <li>AI-Powered Analytics</li>
+          <li>Generative AI (Google, Databricks)</li>
+        </ul>
+      </div>
+      <div class="skill-group">
+        <div class="skill-group-icon">⚙️</div>
+        <div class="skill-group-name">Data Engineering</div>
+        <ul class="skill-list">
+          <li>Python (Pandas, NumPy, Numba)</li>
+          <li>SQL Server & MySQL</li>
+          <li>ETL Pipeline Development</li>
+          <li>Snowflake / Hive / Spark</li>
+          <li>IICS Informatica</li>
+          <li>Task Scheduler / Automation</li>
+        </ul>
+      </div>
+      <div class="skill-group">
+        <div class="skill-group-icon">📈</div>
+        <div class="skill-group-name">Capital Markets</div>
+        <ul class="skill-list">
+          <li>MSR Valuation & Modeling</li>
+          <li>CPR / SMM Modeling</li>
+          <li>Delinquency & DQ Modeling</li>
+          <li>DCF & NPV Analysis</li>
+          <li>Loan Sales Analytics</li>
+          <li>Margin & Pricing Analytics</li>
+        </ul>
+      </div>
+      <div class="skill-group">
+        <div class="skill-group-icon">📊</div>
+        <div class="skill-group-name">BI & Visualization</div>
+        <ul class="skill-list">
+          <li>Tableau (Certified Analyst)</li>
+          <li>Power BI</li>
+          <li>Plotly / Streamlit</li>
+          <li>Excel (Advanced)</li>
+          <li>JMP / R (Ggplot2)</li>
+          <li>Google Analytics</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div style="max-width:1200px; margin:0 auto;">
+    <div class="section-header reveal">
+      <span class="section-num">04</span>
+      <h2 class="section-title">Experience</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="timeline reveal">
+
+      <div class="timeline-item">
+        <div class="exp-period">Aug 2021 — Present</div>
+        <div class="exp-title">Capital Markets Analyst</div>
+        <div class="exp-company">Veterans United Home Loans · Columbia, MO</div>
+        <ul class="exp-bullets">
+          <li>Built AnalytIQ — an internal multi-agent AI copilot translating natural language into SQL, visualizations, insights, and automated reports</li>
+          <li>Designed and implemented production-grade MSR valuation engine modeling loan-level cash flows across delinquency, foreclosure, prepayment, servicing income, and DCF valuation</li>
+          <li>Reduced manual reporting time by 50%+ through automation of overnight Python models integrated with SQL and email delivery</li>
+          <li>Built Selenium-based scrapers to extract live mortgage rates and swap curves from dynamic financial sources</li>
+          <li>Developed delinquency, prepayment, and repeat capture models aligned with market trends for daily MSR forecasting</li>
+          <li>Led end-to-end loan trading: bid tape generation, analysis, competitive pricing, and margin optimization</li>
+        </ul>
+      </div>
+
+      <div class="timeline-item">
+        <div class="exp-period">Aug 2019 — May 2021</div>
+        <div class="exp-title">Research Assistant</div>
+        <div class="exp-company">Missouri University of Science & Technology · Rolla, MO</div>
+        <ul class="exp-bullets">
+          <li>Conducted systematic analysis of eye-tracking metrics to identify psychological indicators of sleepiness</li>
+          <li>Applied statistical algorithms including t-test and hypothesis testing to eye-tracking data</li>
+          <li>Published research at four international HCI and information systems conferences</li>
+        </ul>
+      </div>
+
+      <div class="timeline-item">
+        <div class="exp-period">Sep 2014 — Aug 2018</div>
+        <div class="exp-title">Specialist — Network Analytics</div>
+        <div class="exp-company">Ericsson India Global Services · India</div>
+        <ul class="exp-bullets">
+          <li>Led team for network performance optimization using analytics and data science</li>
+          <li>Applied statistical analysis (distribution, covariance, correlation, hypothesis testing) for network KPI management</li>
+          <li>Extracted and processed large structured/unstructured datasets for network improvement</li>
+          <li>Received Key Contributor Award twice and Power Award five times</li>
+        </ul>
+      </div>
+
+      <div class="timeline-item">
+        <div class="exp-period">Feb 2009 — Aug 2014</div>
+        <div class="exp-title">Senior Engineer</div>
+        <div class="exp-company">Ericsson India Pvt Ltd · India</div>
+        <ul class="exp-bullets">
+          <li>Led network rollout and capacity management for business growth</li>
+          <li>Interpreted data/metrics/KPIs to determine operational impact and opportunities</li>
+          <li>Communicated key findings to stakeholders via visualizations and presentations</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- PUBLICATIONS -->
+<section id="publications">
+  <div class="pub-wrapper">
+    <div class="section-header reveal">
+      <span class="section-num">05</span>
+      <h2 class="section-title">Research & Publications</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="pub-grid reveal">
+      <div class="pub-card">
+        <div class="pub-venue">Springer · HCII 2020 · Lecture Notes in Computer Science</div>
+        <div class="pub-title">A Review on Eye-Tracking Metrics for Sleepiness</div>
+        <div class="pub-meta">Roy D., Nah F.FH. — HCI International 2020 Late Breaking Papers, vol 12427</div>
+      </div>
+      <div class="pub-card">
+        <div class="pub-venue">AMCIS 2020 · Salt Lake City, Utah</div>
+        <div class="pub-title">Indicators of Sleepiness using Eye-tracking</div>
+        <div class="pub-meta">Roy, D., Nah, F., & Thimgan, M. — Twenty-Sixth Americas Conference on Information Systems</div>
+      </div>
+      <div class="pub-card">
+        <div class="pub-venue">MWAIS 2020 · Des Moines, Iowa</div>
+        <div class="pub-title">Use of Eye-tracking to Identify Psychological Indicators of Sleepiness</div>
+        <div class="pub-meta">Roy, D., Nah, F., & Thimgan, M. — Fifteenth Midwest Association for Information Systems Conference</div>
+      </div>
+      <div class="pub-card">
+        <div class="pub-venue">Conferences · 2020</div>
+        <div class="pub-title">International Conference Presentations</div>
+        <div class="pub-meta">Presented at ECIS (June), PACIS (June), HCII (July), and AMCIS (August) — four major international venues in a single year</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- EDUCATION -->
+<section id="education">
+  <div style="max-width:1200px; margin:0 auto;">
+    <div class="section-header reveal">
+      <span class="section-num">06</span>
+      <h2 class="section-title">Education & Certifications</h2>
+      <div class="section-line"></div>
+    </div>
+    <div class="edu-grid reveal">
+      <div>
+        <div class="edu-item">
+          <div class="edu-degree">M.S. Information Science & Technology</div>
+          <div class="edu-school">Missouri University of Science & Technology</div>
+          <div class="edu-school">Specialization: Business Analytics · Data Science · E-Commerce</div>
+          <div class="edu-year">2021 · GPA 3.7 / 4.0</div>
+        </div>
+        <div class="edu-item">
+          <div class="edu-degree">B.Tech. Electrical Engineering</div>
+          <div class="edu-school">West Bengal University of Technology, India</div>
+          <div class="edu-year">2008 · GPA 8.1 / 10.0</div>
+        </div>
+      </div>
+      <div>
+        <ul class="certs-list">
+          <li class="cert-item">Introduction to Generative AI — Google Cloud</li>
+          <li class="cert-item">Generative AI Fundamentals — Databricks</li>
+          <li class="cert-item">Hands-On Essentials: Data Warehousing — Snowflake</li>
+          <li class="cert-item">Tableau Analyst — Tableau</li>
+          <li class="cert-item">Statistics for Data Science and Business Analysis — Udemy</li>
+          <li class="cert-item">Business Analytics and Data Science — Missouri S&T</li>
+          <li class="cert-item">Electronic and Social Commerce — Missouri S&T</li>
+          <li class="cert-item">Google Analytics for Beginners — Google Analytics Academy</li>
+          <li class="cert-item">R — DataCamp</li>
+          <li class="cert-item">Data Visualization — DataCamp</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-glow"></div>
+  <div class="contact-inner reveal">
+    <p class="contact-label">Let's Connect</p>
+    <h2 class="contact-heading">Building something<br>intelligent together.</h2>
+    <a href="mailto:debfinal@gmail.com" class="btn-primary" style="font-size:0.8rem; letter-spacing:0.1em;">debfinal@gmail.com</a>
+    <div class="contact-links">
+      <a href="https://www.linkedin.com/in/debasis-roy-64b81923/" target="_blank" class="contact-link">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 01-2.063-2.065 2.064 2.064 0 112.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+        LinkedIn
+      </a>
+      <a href="https://github.com/debfinal" target="_blank" class="contact-link">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
+        GitHub
+      </a>
+      <a href="tel:4174296410" class="contact-link">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
+        (417) 429-6410
+      </a>
+      <a href="https://debfinal.github.io" target="_blank" class="contact-link">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
+        debfinal.github.io
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-text">© 2025 Debasis Roy · Columbia, Missouri · USA</div>
+  <div class="footer-logo">DR</div>
+  <div class="footer-text">AI Analytics Engineer</div>
+</footer>
+
+<script>
+  // Intersection Observer for scroll reveals
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.1 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // Active nav link on scroll
+  const sections = document.querySelectorAll('section[id]');
+  const navLinks = document.querySelectorAll('.nav-links a');
+
+  window.addEventListener('scroll', () => {
+    let current = '';
+    sections.forEach(section => {
+      const sectionTop = section.offsetTop - 100;
+      if (scrollY >= sectionTop) current = section.getAttribute('id');
+    });
+    navLinks.forEach(link => {
+      link.style.color = link.getAttribute('href') === `#${current}` ? 'var(--gold)' : '';
+    });
+  });
+</script>
+</body>
+</html>
